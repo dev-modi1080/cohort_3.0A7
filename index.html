@@ -4,68 +4,346 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Manager</title>
-
+    <title>AetherTask — Premium Task Manager & DOM Console</title>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
+    <!-- Toast notification container -->
+    <div id="toast-container" class="toast-container"></div>
 
     <div class="main">
-
-        <div class="theme-btn">
-            Dark Mode
-        </div>
-        <div class="task-count">
-            <div class="task-count-box">
-                <h5>Total Task</h5>
-                <p class="r">0</p>
-            </div>
-            <div class="task-count-box">
-                <h5>Compeleted Task</h5>
-                <p class="g">0</p>
-            </div>
-            <div class="task-count-box">
-                <h5>Pending Task</h5>
-                <p class="b">0</p>
-            </div>
-        </div>
-
-
-        <div class="task-asign">
-            <h1>Create a Task</h1>
-            <p>Add a new task</p>
-            <div class="boxes">
-                <input type="text" placeholder="Enter The Task">
-                <select name="Work">
-                    <option>Work</option>
-                    <option>Urgent</option>
-                    <option>Study</option>
-
-                </select>
-                <button class="btn" id="task">Add Task</button>
-            </div>
-        </div>
-
-
-        <div class="task-apear">
-            <h1>Your Tasks</h1>
-           
-            <!-- <div class="task-box">
-                <div class="text">
-                    <h5>Test</h5>
+        <!-- Dashboard Container -->
+        <div class="dashboard-wrapper">
+            
+            <!-- Header section -->
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h1 class="logo">Aether<span>Task</span></h1>
+                    <p class="subtitle">CRUD Task Dashboard & DOM Inspector</p>
                 </div>
-                <div class="btns">
-                    <div class="type">Status</div>
-                    <button class="btn btn-1">Edit</button>
-                    <button class="btn btn-2">Complete</button>
-                    <button class="btn btn-3">Delete</button>
+                <div class="header-right">
+                    <div class="theme-btn" id="theme-toggle-btn">
+                        🌙 Dark Mode
+                    </div>
+                    <div class="theme-btn console-btn" id="console-toggle-btn">
+                        🛠️ Concept Explorer
+                    </div>
                 </div>
-            </div> -->
+            </header>
+
+            <!-- KPI Statistics Cards -->
+            <div class="task-count">
+                <div class="task-count-box total-box">
+                    <div class="count-meta">
+                        <h5>Total Tasks</h5>
+                        <p class="r" id="count-total">0</p>
+                    </div>
+                    <div class="count-icon">📁</div>
+                </div>
+                <div class="task-count-box pending-box">
+                    <div class="count-meta">
+                        <h5>Pending Tasks</h5>
+                        <p class="b" id="count-pending">0</p>
+                    </div>
+                    <div class="count-icon">⏳</div>
+                </div>
+                <div class="task-count-box completed-box">
+                    <div class="count-meta">
+                        <h5>Completed Tasks</h5>
+                        <p class="g" id="count-completed">0</p>
+                    </div>
+                    <div class="count-icon">✓</div>
+                </div>
+                <!-- Circular Progress Ring Card -->
+                <div class="task-count-box progress-box">
+                    <div class="progress-ring-wrapper">
+                        <svg class="progress-ring" width="60" height="60">
+                            <circle class="progress-ring__circle-bg" stroke="rgba(0, 0, 0, 0.05)" stroke-width="5" fill="transparent" r="24" cx="30" cy="30" />
+                            <circle class="progress-ring__circle" id="progress-indicator" stroke="var(--primary-color)" stroke-width="5" fill="transparent" r="24" cx="30" cy="30" />
+                        </svg>
+                        <div class="progress-percentage" id="progress-text">0%</div>
+                    </div>
+                    <div class="count-meta">
+                        <h5>Completion Rate</h5>
+                        <p class="progress-label">Efficiency Ratio</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workspace: Sidebar (Create Task) and Main (Task List) -->
+            <div class="workspace-grid">
+                
+                <!-- Creator Card -->
+                <div class="task-asign">
+                    <h1>Create a Task</h1>
+                    <p>Assign a new task with details</p>
+                    
+                    <form id="task-create-form" class="task-form" onsubmit="return false;">
+                        <div class="input-field">
+                            <label for="task-title">Task Description</label>
+                            <input type="text" id="task-title" placeholder="Enter The Task Title..." required autocomplete="off">
+                        </div>
+                        
+                        <div class="row">
+                            <div class="input-field col-6">
+                                <label for="task-category">Category</label>
+                                <select id="task-category" name="Work">
+                                    <option value="Work">💼 Work</option>
+                                    <option value="Urgent">🚨 Urgent</option>
+                                    <option value="Study">📚 Study</option>
+                                    <option value="Personal">🏠 Personal</option>
+                                </select>
+                            </div>
+                            <div class="input-field col-6">
+                                <label for="task-priority">Priority</label>
+                                <select id="task-priority">
+                                    <option value="Low">🟢 Low</option>
+                                    <option value="Medium" selected>🟡 Medium</option>
+                                    <option value="High">🔴 High</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-field">
+                            <label for="task-duedate">Due Date (Optional)</label>
+                            <input type="date" id="task-duedate">
+                        </div>
+
+                        <button class="btn" id="task" type="submit">Add Task</button>
+                    </form>
+                    
+                    <div class="edu-card-tip">
+                        <h3>💡 DOM Concept Tip</h3>
+                        <p id="edu-tip-text">Every time you submit this form, Vanilla JS uses <code>document.createElement()</code> and appends nodes to build the Task Card in the DOM tree.</p>
+                    </div>
+                </div>
+
+                <!-- Tasks Listing & Filters -->
+                <div class="task-apear-container">
+                    <div class="list-head">
+                        <h1>Your Tasks</h1>
+                        
+                        <!-- Search, Filter & Sort Bar -->
+                        <div class="controls-bar">
+                            <div class="search-input-wrapper">
+                                <span class="search-icon">🔍</span>
+                                <input type="text" id="search-bar" placeholder="Search tasks...">
+                            </div>
+                            <div class="filters-row">
+                                <select id="filter-cat-select" class="filter-dropdown">
+                                    <option value="All">All Categories</option>
+                                    <option value="Work">Work</option>
+                                    <option value="Urgent">Urgent</option>
+                                    <option value="Study">Study</option>
+                                    <option value="Personal">Personal</option>
+                                </select>
+                                <select id="filter-status-select" class="filter-dropdown">
+                                    <option value="All">All Statuses</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                                <select id="sort-select" class="filter-dropdown">
+                                    <option value="newest">Newest First</option>
+                                    <option value="oldest">Oldest First</option>
+                                    <option value="priority">Priority: High to Low</option>
+                                    <option value="alphabetical">Alphabetical</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scrollable Task List -->
+                    <div class="task-apear" id="tasks-container">
+                        <!-- Dynamic items will render here -->
+                        <div class="empty-state" id="empty-state-view">
+                            <span class="empty-state-icon">🏖️</span>
+                            <h3>No tasks found</h3>
+                            <p>Relax, or add a new task to get started!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <!-- Collapsible Concepts Explorer Panel -->
+        <aside class="concepts-panel hidden" id="concepts-panel-aside">
+            <div class="panel-header">
+                <h2>🛠️ Browser & DOM Explorer</h2>
+                <div class="close-panel-btn" id="close-panel-trigger">×</div>
+            </div>
+
+            <!-- Tab Buttons -->
+            <div class="panel-tabs">
+                <button class="panel-tab-btn active" data-target="panel-propagation">Event Log</button>
+                <button class="panel-tab-btn" data-target="panel-attributes">Attributes vs Props</button>
+                <button class="panel-tab-btn" data-target="panel-pipeline">Rendering Pipeline</button>
+            </div>
+
+            <!-- Tab 1: Event Log -->
+            <div class="tab-panel active" id="panel-propagation">
+                <p class="panel-desc">Traces how a click traverses the DOM tree (Capturing down, Bubbling up) to illustrate Event Delegation.</p>
+                
+                <div class="terminal-ctrl">
+                    <span class="term-lbl">Live Event Log</span>
+                    <button class="btn-clear" id="btn-clear-events">Clear Log</button>
+                </div>
+                
+                <div class="terminal-box">
+                    <div class="terminal-head">
+                        <span class="term-circle red"></span>
+                        <span class="term-circle yellow"></span>
+                        <span class="term-circle green"></span>
+                        <span class="term-title">event_bubble_tracer.log</span>
+                    </div>
+                    <div class="terminal-body" id="event-tracer-logs">
+                        <div class="log-row sys">> Console ready. Click any button in the Task List to trace event delegation.</div>
+                    </div>
+                </div>
+
+                <div class="panel-edu-box">
+                    <h4>How Event Delegation Works</h4>
+                    <p>Instead of adding separate event handlers to each Task Card, a single click handler is registered on <code>#tasks-container</code>. When you click buttons inside a card, the event bubbles up. JavaScript uses <code>event.target</code> to identify which element triggered the click and runs the corresponding operation.</p>
+                </div>
+            </div>
+
+            <!-- Tab 2: Attributes vs Props -->
+            <div class="tab-panel" id="panel-attributes">
+                <p class="panel-desc">Select any Task Card in your list (click its description text or click "Inspect" if available) to inspect its HTML Attributes vs. DOM Properties.</p>
+                
+                <!-- Unselected State -->
+                <div class="inspector-prompt" id="inspector-prompt-box">
+                    <div class="prompt-icon">🔍</div>
+                    <p>Click the description text of any task card in the list to inspect its DOM node properties live.</p>
+                </div>
+
+                <!-- Selected State -->
+                <div class="inspector-details hidden" id="inspector-display-box">
+                    <h3 id="inspecting-title">Task Title</h3>
+                    <p class="inspect-id">DOM ID: <span id="inspecting-id">N/A</span></p>
+
+                    <div class="inspect-columns">
+                        <!-- Attributes -->
+                        <div class="inspect-column">
+                            <h4>HTML Attributes</h4>
+                            <table class="inspect-tbl">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inspect-attributes-list">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Properties -->
+                        <div class="inspect-column">
+                            <h4>DOM Properties</h4>
+                            <table class="inspect-tbl">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inspect-properties-list">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Playground -->
+                    <div class="playground-section">
+                        <h4>Interactive Playground</h4>
+                        <p class="play-desc">Directly edit DOM properties on this task element to test if it reflects in the HTML attribute or DOM visual representation.</p>
+                        
+                        <div class="play-field">
+                            <label for="play-task-title-input">Modify title property (<code>h5.textContent</code>)</label>
+                            <input type="text" id="play-task-title-input" placeholder="Type new title...">
+                        </div>
+                        
+                        <div class="play-field flex-row">
+                            <label for="play-task-complete-check">Toggle completed property (<code>.classList.toggle('completed')</code>)</label>
+                            <input type="checkbox" id="play-task-complete-check">
+                        </div>
+                        
+                        <div class="play-output" id="play-log-output">
+                            Playground logs will appear here...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-edu-box">
+                    <h4>Attributes vs. Properties</h4>
+                    <ul>
+                        <li><strong>Attributes</strong>: Defined in the HTML source code (e.g. <code>data-id</code>, <code>class</code>). They represent the initial configuration and are always strings.</li>
+                        <li><strong>Properties</strong>: Objects in JS memory representing the DOM node (e.g. <code>classList</code>, <code>dataset</code>, <code>id</code>). They are typed and represent the live, editable state.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tab 3: Render Pipeline -->
+            <div class="tab-panel" id="panel-pipeline">
+                <p class="panel-desc">Visualizes how the browser processes changes dynamically made to the page.</p>
+
+                <div class="render-pipeline-flow">
+                    <div class="pipeline-step step-source">
+                        <h5>HTML & CSS Source</h5>
+                        <p>Raw markup & style declarations</p>
+                        <div class="flow-arrow">▼</div>
+                    </div>
+                    <div class="pipeline-step step-parse">
+                        <h5>Parsing & Tokenization</h5>
+                        <p>Characters converted into tokens, then object nodes</p>
+                        <div class="flow-arrow">▼</div>
+                    </div>
+                    <div class="pipeline-row-split">
+                        <div class="pipeline-step col-step step-dom">
+                            <h5>DOM Tree</h5>
+                            <p>Document Object Model tree of elements</p>
+                        </div>
+                        <div class="pipeline-step col-step step-cssom">
+                            <h5>CSSOM Tree</h5>
+                            <p>CSS Object Model tree of selector styles</p>
+                        </div>
+                    </div>
+                    <div class="flow-arrow-center">▼</div>
+                    <div class="pipeline-step step-render">
+                        <h5>Render Tree</h5>
+                        <p>Matches visible DOM nodes with CSSOM styles</p>
+                        <div class="flow-arrow">▼</div>
+                    </div>
+                    <div class="pipeline-step step-layout">
+                        <h5>Layout (Reflow)</h5>
+                        <p>Calculates coordinates and geometry of elements on screen</p>
+                        <div class="flow-arrow">▼</div>
+                    </div>
+                    <div class="pipeline-step step-paint">
+                        <h5>Paint & Composite</h5>
+                        <p>Rasterizes pixels and overlays layered elements on the GPU</p>
+                    </div>
+                </div>
+
+                <div class="panel-edu-box">
+                    <h4>Pipeline Impact on Actions</h4>
+                    <ul>
+                        <li><strong>Reflow + Paint</strong>: Caused by structural DOM changes (adding/deleting task cards, resizing window, changing font sizes). Very expensive.</li>
+                        <li><strong>Paint Only</strong>: Triggered by visual modifications (hover styles, text color edits, backgrounds). Moderately expensive.</li>
+                        <li><strong>Composite Only</strong>: Occurs on CSS transforms or opacity changes. High-performance; skips layout/painting.</li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
     </div>
-
 
     <script src="script.js"></script>
 </body>
